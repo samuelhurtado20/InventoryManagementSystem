@@ -8,6 +8,8 @@
 <p role="status">Current count: @currentCount</p>
 
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+<br/>
+@*<ViewInventoriesComponent OnSearchInventories="OnSearchInventories"></ViewInventoriesComponent>*@
 
 @code {
     private int currentCount = 0;
@@ -21,4 +23,6 @@
     {
         currentCount++;
     }
+
+    
 }

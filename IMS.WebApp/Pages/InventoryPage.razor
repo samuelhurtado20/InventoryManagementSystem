@@ -1,0 +1,65 @@
+﻿@page "/inventories"
+@inject IViewInventoriesByNameUseCase ViewInventoriesByNameUseCase
+@inject NavigationManager NavigationManager
+
+<h3>Inventory List (inventories)</h3>
+<br/>
+
+<ViewInventoriesComponent OnSearchInventories="OnSearchInventories"></ViewInventoriesComponent>
+
+@if(_inventories != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var inventory in this._inventories)
+            {
+            <tr>
+                <td>@inventory.InventoryName</td>
+                <td>@inventory.Quantity</td>
+                <td>@inventory.Price.ToString("c")</td>
+                <td>
+                    <button type="button" class="btn btn-light" @onclick="@( () =>EditInventory(inventory.InventoryId) )">Edit</button>
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+<br/>
+<button type="button" class="btn btn-primary" @onclick="AddInventory">Add Inventory</button>
+
+@code 
+{
+    private IEnumerable<Inventory> _inventories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+
+        this._inventories = await ViewInventoriesByNameUseCase.ExecuteAsync();
+    }
+
+    private void OnSearchInventories(List<Inventory> inventories)
+    {
+        _inventories = inventories;
+    }
+
+    private void AddInventory()
+    {
+        NavigationManager.NavigateTo("/addInventory");
+    }
+
+    private void EditInventory(int id)
+    {
+        NavigationManager.NavigateTo($"/editInventory/{id}");
+    }
+
+}

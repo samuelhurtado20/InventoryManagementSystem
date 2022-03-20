@@ -1,12 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace IMS.CoreBusiness
 {
-    public class Inventory
+    public class Product
     {
-        public int InventoryId { get; set; }
-        [Required]
-        public string InventoryName { get; set; } = string.Empty;
+        public int ProductId { get; set; }
+        public string ProductName { get; set; } = string.Empty;
         [Range(0, int.MaxValue, ErrorMessage = "Quantity must be greater or equal to {0}")]
         public int Quantity { get; set; }
         [Range(0, double.MaxValue, ErrorMessage = "Price must be greater or equal to {0}")]

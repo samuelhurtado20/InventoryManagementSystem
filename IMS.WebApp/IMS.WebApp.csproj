@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-IMS.WebApp-D890ADF2-2B22-4D95-AFD5-8D7856C230CA</UserSecretsId>
   </PropertyGroup>
