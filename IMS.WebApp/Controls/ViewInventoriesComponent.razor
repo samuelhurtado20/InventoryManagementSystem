@@ -3,20 +3,56 @@
 <div class="input-group mb-3">
     <input typeof="text"
     class="form-control form-control-lg"
-    placeholder="Type inventory name here to search" @bind-value="nameToSearch" />
+    placeholder="Type inventory name here to search" @bind-value="_nameToSearch" />
     <button type="button" class="input-group-text btn-success"
     @onclick="@(async()=>{await ViewInventories(); })"
     >View</button>
 </div>
 
+@if (this.DisplayResult && _inventories != null && _selectInventory == null)
+{
+    <div style="overflow-y:auto; max-height:300px;">
+        <ul style="list-style-type:none;">
+            @foreach (var inventory in _inventories)
+            {
+                <li style="cursor:pointer;" @onclick="@( async ()=> { await SelectInventory(inventory); })" @key="inventory.InventoryId">@inventory.InventoryName</li>
+            }
+        </ul>
+    </div>
+}
+
+@if(this._selectInventory != null)
+{
+    <test>@this._selectInventory.InventoryName</test>
+}
+
 @code {
-    private string nameToSearch;
+    private string _nameToSearch;
+    private List<Inventory> _inventories;
+    private Inventory _selectInventory;
+
     [Parameter]
     public EventCallback<List<Inventory>> OnSearchInventories { get; set; }
+
+    [Parameter]
+    public EventCallback<Inventory> OnSelectInventory { get; set; }
+
+    [Parameter]
+    public bool DisplayResult { get; set; } = false;
+
     private async Task ViewInventories()
     {
-        var inventories = (await ViewInventoriesByNameUseCase.ExecuteAsync(nameToSearch ?? string.Empty)).ToList();
+        var inventories = (await ViewInventoriesByNameUseCase.ExecuteAsync(_nameToSearch ?? string.Empty)).ToList();
 
         await OnSearchInventories.InvokeAsync(inventories);
+
+        _inventories = inventories;
+        _selectInventory = null;
+    }
+
+    private async Task SelectInventory(Inventory inventory)
+    {
+        await OnSelectInventory.InvokeAsync(inventory);
+        _selectInventory = inventory;
     }
 }

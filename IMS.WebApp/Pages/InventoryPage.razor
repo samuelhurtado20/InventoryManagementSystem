@@ -5,7 +5,7 @@
 <h3>Inventory List (inventories)</h3>
 <br/>
 
-<ViewInventoriesComponent OnSearchInventories="OnSearchInventories"></ViewInventoriesComponent>
+<ViewInventoriesComponent DisplayResult="true" OnSearchInventories="OnSearchInventories" OnSelectInventory="OnSelectInventory"></ViewInventoriesComponent>
 
 @if(_inventories != null)
 {
@@ -21,14 +21,7 @@
         <tbody>
             @foreach(var inventory in this._inventories)
             {
-            <tr>
-                <td>@inventory.InventoryName</td>
-                <td>@inventory.Quantity</td>
-                <td>@inventory.Price.ToString("c")</td>
-                <td>
-                    <button type="button" class="btn btn-light" @onclick="@( () =>EditInventory(inventory.InventoryId) )">Edit</button>
-                </td>
-            </tr>
+                <InventoryItemComponent Inventory="inventory"></InventoryItemComponent>
             }
         </tbody>
     </table>
@@ -39,6 +32,7 @@
 @code 
 {
     private IEnumerable<Inventory> _inventories;
+    private Inventory _inventory;
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,6 +54,12 @@
     private void EditInventory(int id)
     {
         NavigationManager.NavigateTo($"/editInventory/{id}");
+    }
+
+    private void OnSelectInventory(Inventory inventory)
+    {
+        //await OnSelectInventoy.InvokeAsync(inventory);
+        //_inventory = inventory;
     }
 
 }
