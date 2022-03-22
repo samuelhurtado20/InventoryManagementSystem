@@ -28,6 +28,7 @@
     </table>
 }
 <br/>
+<button type="button" class="btn btn-primary" @onclick="AddProduct">Add Product</button>
 
 @code 
 {
@@ -38,6 +39,11 @@
         base.OnInitialized();
 
         this._products = await ViewProductsByNameUseCase.ExecuteAsync();
+    }
+
+    private void AddProduct()
+    {
+        NavigationManager.NavigateTo("/addProduct");
     }
 
     private void OnSearchProducts(List<Product> products)

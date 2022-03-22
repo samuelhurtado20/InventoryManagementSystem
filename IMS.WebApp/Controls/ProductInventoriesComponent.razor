@@ -1,0 +1,45 @@
+﻿<div class="form-group">
+    <label for="inventories">Inventories</label>
+    <ViewInventoriesComponent 
+        DisplayResult="true" 
+        OnSelectInventory="OnSelectInventory"></ViewInventoriesComponent>
+</div>
+@if(this.ProductInventories is not null && this.ProductInventories.Count > 0)
+{    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var productInventory in this.ProductInventories)
+               {           
+                <tr>
+                    <td>@productInventory.Inventory.InventoryName</td>
+                    <td><input type="number" min="0" max="@productInventory.Inventory.Quantity" @bind-value="productInventory.InventoryQuantity" /></td>
+                    <td><button class="btn btn-link" type="button" @onclick="( () => RemoveInventory(productInventory) )">Remove</button></td> 
+                </tr>
+               }
+        </tbody>
+    </table>
+}
+
+@code 
+{
+    public List<ProductInventory> ProductInventories = new();
+
+    private void OnSelectInventory(Inventory inventory)
+    {
+        if (ProductInventories.Any(x => x.Inventory.InventoryName.Equals(inventory.InventoryName, StringComparison.OrdinalIgnoreCase))) return;
+
+        this.ProductInventories.Add(new ProductInventory { InventoryId=inventory.InventoryId, Inventory = inventory });
+    }
+
+    private void RemoveInventory(ProductInventory productInventory)
+    {
+        this.ProductInventories.Remove(productInventory);
+    }
+}
