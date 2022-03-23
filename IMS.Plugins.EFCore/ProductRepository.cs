@@ -1,4 +1,5 @@
 ﻿using IMS.CoreBusiness;
+using IMS.UseCases;
 using IMS.UseCases.PluginInterfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -25,7 +26,12 @@ namespace IMS.Plugins.EFCore
             await this.db.SaveChangesAsync();
         }
 
-        public async Task<List<Product>> GetProductsByName(string name)
+        public async Task<Product?> GetProductsByIdAsync(int productId)
+        {
+            return await this.db.Products.FindAsync(productId);
+        }
+
+        public async Task<List<Product>> GetProductsByNameAsync(string name)
         {
             return await this.db.Products.Where(x => x.ProductName.Contains(name, StringComparison.OrdinalIgnoreCase) || string.IsNullOrWhiteSpace(name)).ToListAsync();
         }
