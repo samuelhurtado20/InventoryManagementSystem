@@ -22,7 +22,9 @@ namespace IMS.CoreBusiness
         [ProductPriceGreaterThanInventoriesPrice]
         public double Price { get; set; }
 
-        public List<ProductInventory>? ProductInventories { get; set; }
+        public bool IsActive { get; set; }
+
+        public List<ProductInventory> ProductInventories { get; set; } = new();
 
         public double TotalInventoryCost()
         {

@@ -3,10 +3,14 @@
 <div class="input-group">
     <input typeof="text"
     class="form-control form-control-lg"
-    placeholder="Type inventory name here to search" @bind-value="_nameToSearch" />
+    placeholder="Type inventory name here to search" 
+    @bind-value="nameToSearch" 
+    @bind-value:event="oninput" />
+
     <button type="button" class="input-group-text btn-success"
     @onclick="@(async()=>{await ViewInventories(); })"
     >View</button>
+
 </div>
 
 @if (this.DisplayResult && _inventories != null && _selectInventory == null)
@@ -28,6 +32,18 @@
 
 @code {
     private string _nameToSearch;
+    public string nameToSearch
+    { 
+        get => _nameToSearch;        
+        set
+        {
+            _nameToSearch = value;
+            if (!string.IsNullOrWhiteSpace(_nameToSearch) && _nameToSearch.Length > 2)
+            {
+                ViewInventories();
+            }
+        } 
+    }
     private List<Inventory> _inventories;
     private Inventory _selectInventory;
 
@@ -48,6 +64,8 @@
 
         _inventories = inventories;
         _selectInventory = null;
+
+        StateHasChanged();
     }
 
     private async Task SelectInventory(Inventory inventory)

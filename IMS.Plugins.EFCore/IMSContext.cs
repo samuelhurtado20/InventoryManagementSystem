@@ -46,8 +46,8 @@ namespace IMS.Plugins.EFCore
                 );
 
             modelBuilder.Entity<Product>().HasData(
-                new Product { ProductId = 1, ProductName = "Gas car", Price = 20000, Quantity = 1 },
-                new Product { ProductId = 2, ProductName = "Electric car", Price = 15000, Quantity = 1 }
+                new Product { ProductId = 1, ProductName = "Gas car", Price = 20000, Quantity = 1, IsActive=true },
+                new Product { ProductId = 2, ProductName = "Electric car", Price = 15000, Quantity = 1,IsActive=true }
                 );
 
 

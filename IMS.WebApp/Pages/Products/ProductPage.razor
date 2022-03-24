@@ -22,7 +22,7 @@
         <tbody>
             @foreach(var product in this._products)
             {
-                <ProductItemComponent Product="product"></ProductItemComponent>
+                <ProductItemComponent OnProductDeleted="OnProductDeleted" Product="product"></ProductItemComponent>
             }
         </tbody>
     </table>
@@ -36,7 +36,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        base.OnInitialized();
+        //base.OnInitialized();
 
         this._products = await ViewProductsByNameUseCase.ExecuteAsync();
     }
@@ -51,8 +51,13 @@
         _products = products;
     }
 
-    private void AddInventory()
+    //private void AddInventory()
+    //{
+    //    NavigationManager.NavigateTo("/addInventory");
+    //}
+
+    private async Task OnProductDeleted()
     {
-        NavigationManager.NavigateTo("/addInventory");
+        this._products = await ViewProductsByNameUseCase.ExecuteAsync();
     }
 }

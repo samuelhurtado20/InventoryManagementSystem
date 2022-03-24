@@ -1,0 +1,54 @@
+﻿@page "/purchase"
+@using IMS.WebApp.ViewModels
+@inject NavigationManager NavigationManager
+
+<h3>Purchase Inventory</h3>
+<br/>
+
+@if(_purchaseViewModel is not null)
+{
+    <EditForm Model="_purchaseViewModel" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator></DataAnnotationsValidator>
+        <ValidationSummary></ValidationSummary>
+
+            <div class="form-group">
+                <label for="po">Purchase Order</label>
+                <InputText id="name" @bind-Value="_purchaseViewModel.PurchaseOrder" class="form-control"></InputText>
+            </div>
+
+            <div class="form-group">
+                <label for="inv">Inventory to Purchase</label>
+                <ViewInventoriesComponent DisplayResult="true" OnSelectInventory="OnSelectInventory"></ViewInventoriesComponent>
+                <InputText id="inv" @bind-Value="_purchaseViewModel.InventoryName" class="form-control" disabled></InputText>
+                <input type="text" class="form-control" disabled value="@selectedInventory?.InventoryName" />
+                <input type="hidden" value="@_purchaseViewModel.InventoryId">
+
+            </div>
+
+            <div class="form-group">
+                <label for="qty">Quantity</label>
+                <InputNumber id="qty" @bind-Value="_purchaseViewModel.QuantityToPurchase" class="form-control"></InputNumber>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save</button>
+    </EditForm>
+}
+
+@code 
+{
+    private PurchaseViewModel _purchaseViewModel = new();
+    private Inventory selectedInventory = new();
+
+    private void OnSelectInventory(Inventory inventory)
+    {
+        this.selectedInventory = inventory;
+        _purchaseViewModel.InventoryId = inventory.InventoryId;
+        _purchaseViewModel.InventoryName = inventory.InventoryName;
+    }
+
+    private void OnValidSubmit()
+    {
+        //await AddInventoryUseCase.ExecuteAsync(this.inventory);
+        NavigationManager.NavigateTo("/inventories");
+    }
+}

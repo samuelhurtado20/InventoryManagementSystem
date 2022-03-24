@@ -32,8 +32,8 @@
 {
     [Parameter]
     public EventCallback<List<ProductInventory>> OnInventorySelected { get; set; }
-
-    public List<ProductInventory> ProductInventories = new();
+    [Parameter]
+    public List<ProductInventory> ProductInventories { get; set; } = new();
 
     private async Task OnSelectInventory(Inventory inventory)
     {
