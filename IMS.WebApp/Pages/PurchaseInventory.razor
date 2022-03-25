@@ -1,4 +1,6 @@
 ﻿@page "/purchase"
+
+@inject IPurchaseInventoryUseCase PurchaseInventoryUseCase
 @using IMS.WebApp.ViewModels
 @inject NavigationManager NavigationManager
 
@@ -22,7 +24,10 @@
                 <InputText id="inv" @bind-Value="_purchaseViewModel.InventoryName" class="form-control" disabled></InputText>
                 <input type="text" class="form-control" disabled value="@selectedInventory?.InventoryName" />
                 <input type="hidden" value="@_purchaseViewModel.InventoryId">
-
+            @if (selectedInventory is not null)
+            {
+                <text>Price: </text> @selectedInventory?.Price.ToString("c");
+            }
             </div>
 
             <div class="form-group">
@@ -30,7 +35,7 @@
                 <InputNumber id="qty" @bind-Value="_purchaseViewModel.QuantityToPurchase" class="form-control"></InputNumber>
             </div>
 
-            <button type="submit" class="btn btn-primary">Save</button>
+            <button type="submit" class="btn btn-primary">Purchase</button>
     </EditForm>
 }
 
@@ -46,9 +51,18 @@
         _purchaseViewModel.InventoryName = inventory.InventoryName;
     }
 
-    private void OnValidSubmit()
+    private async Task OnValidSubmit()
     {
         //await AddInventoryUseCase.ExecuteAsync(this.inventory);
-        NavigationManager.NavigateTo("/inventories");
+
+        await PurchaseInventoryUseCase.ExecuteAsync(
+            this._purchaseViewModel.PurchaseOrder,
+            this.selectedInventory,
+            this._purchaseViewModel.QuantityToPurchase,
+            "SAMUEL"
+        );
+        this._purchaseViewModel = new();
+        this.selectedInventory = new();
+        //NavigationManager.NavigateTo("/inventories");
     }
 }
