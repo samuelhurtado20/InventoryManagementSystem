@@ -1,10 +1,5 @@
 ﻿using IMS.CoreBusiness;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IMS.Plugins.EFCore
 {
@@ -16,10 +11,9 @@ namespace IMS.Plugins.EFCore
         }
 
         public DbSet<Inventory> Inventories { get; set; }
-
         public DbSet<Product> Products { get; set; }
-
         public DbSet<InventoryTransaction> InventoryTransactions { get; set; }
+        public DbSet<ProductTransaction> ProductTransactions { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

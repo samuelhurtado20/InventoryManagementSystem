@@ -20,7 +20,7 @@ namespace IMS.Plugins.EFCore
             await this.db.SaveChangesAsync();
         }
 
-        public async Task<Inventory?> GetByIdAsync(int inventoryId)
+        public async Task<Inventory> GetByIdAsync(int inventoryId)
         {
             var inv = await this.db.Inventories.FindAsync(inventoryId);
             if (inv is not null)

@@ -28,7 +28,7 @@ namespace IMS.Plugins.EFCore
                 QuantityAfter = inventory.Quantity + quantity,
                 TransactionDate = DateTime.UtcNow,
                 DoneBy = doneBy,
-                Cost = price * quantity
+                UnitPrice = price //* quantity
             });
 
             await this.db.SaveChangesAsync();

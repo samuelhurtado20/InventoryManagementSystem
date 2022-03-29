@@ -9,9 +9,9 @@ namespace IMS.CoreBusiness.Validations
 {
     internal class ProductPriceGreaterThanInventoriesPrice : ValidationAttribute
     {
-        protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            Product? product = validationContext.ObjectInstance as Product;
+            Product product = validationContext.ObjectInstance as Product;
             if(product is not null)
             {
                 if (!product.ValidatePricing())
@@ -19,7 +19,7 @@ namespace IMS.CoreBusiness.Validations
                     //string?[] memberNames = new[] { validationContext.MemberName };
 
                     IEnumerable<string> memberNames = new List<string>();
-                    memberNames.Append(validationContext.MemberName);
+                    _ = memberNames.Append(validationContext.MemberName);
                     return new ValidationResult($"The product's price is less than summary of its inventories' price: {product.TotalInventoryCost()}", memberNames);
                 }
             }
