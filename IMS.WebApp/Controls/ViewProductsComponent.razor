@@ -9,15 +9,43 @@
     >View</button>
 </div>
 
-@code {
+@if (this.DisplayResult && _products != null && _selectProduct == null)
+{
+    <div style="overflow-y:auto; max-height:300px; border: 1px solid silver; margin:13px;">
+        <ul style="list-style-type:none;">
+            @foreach (var prod in _products)
+            {
+                <li style="cursor:pointer;" @onclick="@( async ()=> { await SelectProduct(prod); })" @key="prod.ProductId">@prod.ProductName</li>
+            }
+        </ul>
+    </div>
+}
+
+@code 
+{
     private string nameToSearch;
+    private List<Product> _products;
+    private Product _selectProduct;
+
+    [Parameter]
+    public bool DisplayResult { get; set; } = false;
+
     [Parameter]
     public EventCallback<List<Product>> OnSearchProducts { get; set; }
+
+    [Parameter]
+    public EventCallback<Product> OnSelectProduct { get; set; }
     
     private async Task ViewProducts()
     {
         var products = (await ViewProductsByNameUseCase.ExecuteAsync(nameToSearch ?? string.Empty)).ToList();
 
         await OnSearchProducts.InvokeAsync(products);
+    }
+
+    private async Task SelectProduct(Product product)
+    {
+        await OnSelectProduct.InvokeAsync(product);
+        _selectProduct = product;
     }
 }

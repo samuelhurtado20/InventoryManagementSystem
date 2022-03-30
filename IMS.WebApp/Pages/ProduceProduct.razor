@@ -1,40 +1,65 @@
 ﻿@page "/produce"
+@using IMS.WebApp.ViewModels
+
+@inject IProduceProductUseCase ProduceProductUseCase
 
 <h3>Produce Product</h3>
 <br/>
 
-@*@if(_purchaseViewModel is not null)
+@if(_produceViewModel is not null)
 {
-    <EditForm Model="_purchaseViewModel" OnValidSubmit="OnValidSubmit">
+    <EditForm Model="_produceViewModel" OnValidSubmit="OnValidSubmit">
         <DataAnnotationsValidator></DataAnnotationsValidator>
         <ValidationSummary></ValidationSummary>
 
             <div class="form-group">
-                <label for="po">Purchase Order</label>
-                <InputText id="name" @bind-Value="_purchaseViewModel.PurchaseOrder" class="form-control"></InputText>
+                <label for="po">Production Number</label>
+                <InputText id="name" @bind-Value="_produceViewModel.ProductionNumber" class="form-control"></InputText>
             </div>
 
             <div class="form-group">
-                <label for="inv">Inventory to Purchase</label>
-                <ViewInventoriesComponent DisplayResult="true" OnSelectInventory="OnSelectInventory"></ViewInventoriesComponent>
-                <InputText id="inv" @bind-Value="_purchaseViewModel.InventoryName" class="form-control" disabled></InputText>
-                <input type="text" class="form-control" disabled value="@selectedInventory?.InventoryName" />
-                <input type="hidden" value="@_purchaseViewModel.InventoryId">
-            @if (selectedInventory is not null)
+                <label for="inv">Product to Produce</label>
+                <ViewProductsComponent DisplayResult="true" OnSelectProduct="OnSelectProduct"></ViewProductsComponent>
+                <InputText id="inv" @bind-Value="_produceViewModel.ProductName" class="form-control" disabled></InputText>
+                <input type="text" class="form-control" disabled value="@selectedProduct?.ProductName" />
+                <input type="hidden" value="@_produceViewModel.ProductId">
+            @if (selectedProduct is not null)
             {
-                <text>Price: </text> @selectedInventory?.Price.ToString("c");
+                <text>Price: </text> @selectedProduct?.Price.ToString("c");
             }
             </div>
 
             <div class="form-group">
                 <label for="qty">Quantity</label>
-                <InputNumber id="qty" @bind-Value="_purchaseViewModel.QuantityToPurchase" class="form-control"></InputNumber>
+                <InputNumber id="qty" @bind-Value="_produceViewModel.QuantityToProduce" class="form-control"></InputNumber>
             </div>
 
-            <button type="submit" class="btn btn-primary">Purchase</button>
+            <button type="submit" class="btn btn-primary">Produce</button>
     </EditForm>
-}*@
+}
 
-@code {
+@code 
+{
+    private ProduceViewModel _produceViewModel;
+    private Product selectedProduct;
 
+    private async Task OnValidSubmit()
+    {
+        await ProduceProductUseCase.ExecuteAsync(
+            this._produceViewModel.ProductionNumber,
+            this.selectedProduct,
+            this._produceViewModel.QuantityToProduce,
+            this.selectedProduct.Price,
+            "Samuel"
+        );
+        this.selectedProduct = null;
+        this._produceViewModel = new ProduceViewModel();
+    }
+
+    public void OnSelectProduct(Product product)
+    {
+        this.selectedProduct = product;
+        _produceViewModel.ProductId = product.ProductId;
+        _produceViewModel.ProductName = product.ProductName;
+    }
 }
