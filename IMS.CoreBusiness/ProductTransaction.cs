@@ -18,7 +18,7 @@ namespace IMS.CoreBusiness
 
         //purchase or product
         [Required]
-        public ProductTransactionType ProductType { get; set; }
+        public ProductTransactionType ActivityType { get; set; }
 
         [Required]
         public int QuantityAfter { get; set; }

@@ -9,6 +9,6 @@ namespace IMS.UseCases.PluginInterfaces
 {
     public interface IProductTransactionRepository
     {
-        public Task ProduceAsync(string productionNumber, Product product, int quantity, string doneBy);
+        public Task ProduceAsync(string productionNumber, Product product, int quantity, double price, string doneBy);
     }
 }
