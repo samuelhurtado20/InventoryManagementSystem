@@ -2,10 +2,11 @@
 @using IMS.WebApp.ViewModels
 
 @inject IProduceProductUseCase ProduceProductUseCase
+@inject IValidateEnoughInventoriesForProducingUseCase ValidateEnoughInventoriesForProducingUseCase
 
 <h3>Produce Product</h3>
 <br/>
-
+<ErrorMessageComponent ErrorMessage="@errorMessage"></ErrorMessageComponent>
 @if(_produceViewModel is not null)
 {
     <EditForm Model="_produceViewModel" OnValidSubmit="OnValidSubmit">
@@ -21,11 +22,11 @@
                 <label for="inv">Product to Produce</label>
                 <ViewProductsComponent DisplayResult="true" OnSelectProduct="OnSelectProduct"></ViewProductsComponent>
                 <InputText id="inv" @bind-Value="_produceViewModel.ProductName" class="form-control" disabled></InputText>
-                <input type="text" class="form-control" disabled value="@selectedProduct?.ProductName" />
+                <input type="text" class="form-control" disabled value="@_selectedProduct?.ProductName" />
                 <input type="hidden" value="@_produceViewModel.ProductId">
-            @if (selectedProduct is not null)
+            @if (_selectedProduct is not null)
             {
-                <text>Price: </text> @selectedProduct?.Price.ToString("c");
+                <text>Price: </text> @_selectedProduct?.Price.ToString("c");
             }
             </div>
 
@@ -40,25 +41,32 @@
 
 @code 
 {
-    private ProduceViewModel _produceViewModel;
-    private Product selectedProduct;
+    private ProduceViewModel _produceViewModel = new ProduceViewModel();
+    private Product _selectedProduct;
+    private string errorMessage;
 
     private async Task OnValidSubmit()
     {
+        if(!await ValidateEnoughInventoriesForProducingUseCase.ExecuteAsync(this._selectedProduct, this._produceViewModel.QuantityToProduce))
+        {
+            errorMessage = $"The inventories are not enough for producing the PRODUCT: {this._selectedProduct.ProductName} X {this._produceViewModel.QuantityToProduce} times";
+            return;
+        }
+
         await ProduceProductUseCase.ExecuteAsync(
             this._produceViewModel.ProductionNumber,
-            this.selectedProduct,
+            this._selectedProduct,
             this._produceViewModel.QuantityToProduce,
-            this.selectedProduct.Price,
+            this._selectedProduct.Price,
             "Samuel"
         );
-        this.selectedProduct = null;
+        this._selectedProduct = null;
         this._produceViewModel = new ProduceViewModel();
     }
 
     public void OnSelectProduct(Product product)
     {
-        this.selectedProduct = product;
+        this._selectedProduct = product;
         _produceViewModel.ProductId = product.ProductId;
         _produceViewModel.ProductName = product.ProductName;
     }

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace IMS.Plugins.EFCore
 {
-    internal class ProductTransactionRepository : IProductTransactionRepository
+    public class ProductTransactionRepository : IProductTransactionRepository
     {
         private readonly IMSContext db;
         private readonly IProductRepository repository;
@@ -40,6 +40,23 @@ namespace IMS.Plugins.EFCore
                 ProductId = product.ProductId,
                 QuantityBefore = product.Quantity,
                 QuantityAfter = product.Quantity + quantity,
+                ActivityType = ProductTransactionType.ProduceProduct,
+                TransactionDate = DateTime.Now,
+                DoneBy = doneBy,
+                UnitPrice = price
+            });
+
+            await this.db.SaveChangesAsync();
+        }
+
+        public async Task SellProductAsync(string salesOrderNumber, Product product, int quantity, double price, string doneBy)
+        {
+            await this.db.ProductTransactions.AddAsync(new ProductTransaction
+            {
+                SalesOrderNumber = salesOrderNumber,
+                ProductId = product.ProductId,
+                QuantityBefore = product.Quantity,
+                QuantityAfter = product.Quantity - quantity,
                 ActivityType = ProductTransactionType.ProduceProduct,
                 TransactionDate = DateTime.Now,
                 DoneBy = doneBy,

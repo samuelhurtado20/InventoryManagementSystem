@@ -35,7 +35,7 @@
             _nameToSearch = value;
             if (!string.IsNullOrWhiteSpace(_nameToSearch) && _nameToSearch.Length > 2)
             {
-                ViewInventories();
+                ViewInventories().ConfigureAwait(true);
             }
         } 
     }
