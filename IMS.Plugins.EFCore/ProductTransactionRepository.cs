@@ -20,6 +20,22 @@ namespace IMS.Plugins.EFCore
             this.repository = repository;
         }
 
+        public async Task<IEnumerable<ProductTransaction>> GetProductTransactionsAsync(
+            string productName, 
+            DateTime? dateFrom, 
+            DateTime? dateTo, 
+            ProductTransactionType? transactionType)
+        {
+            var query = from pt in db.ProductTransactions
+                        join prod in db.Products on pt.ProductId equals prod.ProductId
+                        where (string.IsNullOrWhiteSpace(productName) || prod.ProductName.ToLower().IndexOf(productName.ToLower()) >= 0)
+                        && (!dateFrom.HasValue || pt.TransactionDate >= dateFrom.Value.Date)
+                        && (!dateTo.HasValue || pt.TransactionDate <= dateTo.Value.Date.AddDays(1))
+                        && (!transactionType.HasValue || pt.ActivityType == transactionType)
+                        select pt;
+            return await query.Include(x => x.Product).ToListAsync();
+        }
+
         public async Task ProduceAsync(string productionNumber, Product product, int quantity, double price, string doneBy)
         {
             //var prod = await db.Products.Include(x => x.ProductInventories)
@@ -30,7 +46,20 @@ namespace IMS.Plugins.EFCore
             {
                 foreach (var pi in prod.ProductInventories)
                 {
+                    int qtyBefore = pi.Inventory.Quantity;
                     pi.Inventory.Quantity -= quantity * pi.InventoryQuantity;
+
+                    await this.db.InventoryTransactions.AddAsync(new CoreBusiness.InventoryTransaction
+                    {
+                        ProductionNumber = productionNumber,
+                        InventoryId = pi.Inventory.InventoryId,
+                        QuantityBefore = qtyBefore,
+                        ActivityType = InventoryTransactionType.ProduceProduct,
+                        QuantityAfter = pi.Inventory.Quantity,
+                        TransactionDate = DateTime.UtcNow,
+                        DoneBy = doneBy,
+                        UnitPrice = price //* quantity
+                    });
                 }
             }
 
@@ -57,7 +86,7 @@ namespace IMS.Plugins.EFCore
                 ProductId = product.ProductId,
                 QuantityBefore = product.Quantity,
                 QuantityAfter = product.Quantity - quantity,
-                ActivityType = ProductTransactionType.ProduceProduct,
+                ActivityType = ProductTransactionType.SellProduct,
                 TransactionDate = DateTime.Now,
                 DoneBy = doneBy,
                 UnitPrice = price
